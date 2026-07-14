@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hw:HardwarePlatform
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:hw="http://example.org/automotive/hardware"
+    name="vehicleControlPlatform">
+
+    <sensors
+        xsi:type="hw:CameraSensor"
+        name="camera"
+        resolution="1920x1080"
+        fov="120.0"/>
+
+    <sensors
+        xsi:type="hw:LidarSensor"
+        name="lidar"
+        resolution="0.2"
+        fov="360.0"
+        range="200.0"/>
+
+    <sensors
+        xsi:type="hw:RadarSensor"
+        name="radar"
+        resolution="0.5"
+        fov="150.0"
+        range="250.0"/>
+
+    <actuators
+        xsi:type="hw:BrakeActuator"
+        name="brakes"
+        brakingLevel="75.0"/>
+
+    <actuators
+        xsi:type="hw:SteeringActuator"
+        name="steering"
+        steeringAngle="-15.0"/>
+
+</hw:HardwarePlatform>

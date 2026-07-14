@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:hw="http://example.org/automotive/hardware">
+
+    <hw:HardwarePlatform
+        xmi:id="platform_ADAS_01"
+        name="autonomousDrivingPlatform">
+
+        <actuators
+            xsi:type="hw:SteeringActuator"
+            xmi:id="steering_ADAS"
+            name="steeringSystem"
+            steeringAngle="12.5"/>
+
+        <sensors
+            xsi:type="hw:RadarSensor"
+            xmi:id="radar_front"
+            name="frontRadar"
+            resolution="0.4"
+            fov="140.0"
+            range="300.0"/>
+
+        <sensors
+            xsi:type="hw:CameraSensor"
+            xmi:id="camera_front"
+            name="frontCamera"
+            resolution="2560x1440"
+            fov="110.0"/>
+
+        <actuators
+            xsi:type="hw:BrakeActuator"
+            xmi:id="brake_ADAS"
+            name="brakingSystem"
+            brakingLevel="82.5"/>
+
+        <sensors
+            xsi:type="hw:LidarSensor"
+            xmi:id="lidar_roof"
+            name="roofLidar"
+            resolution="0.1"
+            fov="360.0"
+            range="250.0"/>
+
+    </hw:HardwarePlatform>
+</xmi:XMI>

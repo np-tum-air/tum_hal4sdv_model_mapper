@@ -1,0 +1,32 @@
+package AutomotiveHardwareInstances {
+
+    import AutomotiveHardwareDefinitions::*;
+
+    part vehicleControlPlatform : HardwarePlatform {
+
+        part redefines camera {
+            attribute redefines resolution = "1920x1080";
+            attribute redefines fieldOfView = 120.0;
+        }
+
+        part redefines lidar {
+            attribute redefines resolution = "0.2";
+            attribute redefines fieldOfView = 360.0;
+            attribute redefines range = 200.0;
+        }
+
+        part redefines radar {
+            attribute redefines resolution = "0.5";
+            attribute redefines fieldOfView = 150.0;
+            attribute redefines range = 250.0;
+        }
+
+        part redefines brakes {
+            attribute redefines brakingLevel = 75.0;
+        }
+
+        part redefines steering {
+            attribute redefines steeringAngle = -15.0;
+        }
+    }
+}

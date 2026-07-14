@@ -1,0 +1,38 @@
+package AutonomousDrivingPlatform {
+
+    import AutomotiveHardwareDefinitions::*;
+
+    part perceptionPlatform : HardwarePlatform {
+        attribute name = "perceptionPlatform";
+
+        part frontCamera : CameraSensor {
+            attribute name = "frontCamera";
+            attribute resolution = "2560x1440";
+            attribute fov = 110.0;
+        }
+
+        part roofLidar : LidarSensor {
+            attribute name = "roofLidar";
+            attribute resolution = "0.1";
+            attribute fov = 360.0;
+            attribute range = 250.0;
+        }
+
+        part frontRadar : RadarSensor {
+            attribute name = "frontRadar";
+            attribute resolution = "0.4";
+            attribute fov = 140.0;
+            attribute range = 300.0;
+        }
+
+        part brakingSystem : BrakeActuator {
+            attribute name = "brakingSystem";
+            attribute brakingLevel = 82.5;
+        }
+
+        part steeringSystem : SteeringActuator {
+            attribute name = "steeringSystem";
+            attribute steeringAngle = 12.5;
+        }
+    }
+}
