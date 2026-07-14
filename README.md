@@ -1,512 +1,205 @@
-# HAL4SDV Model Mapper
+# LLM-Driven Model Mapping and Validation
 
-This repository contains two Python utilities for LLM-assisted model transformation and validation of EMF models.
+This repository provides an LLM-based framework for automatic model transformation and validation between **Ecore/XMI** and **SysML v2**.
 
 ## Components
 
-### 1. `model_mapper_workflow.py`
-
-Transforms an XMI model instance to comply with a target Ecore metamodel using a Large Language Model (LLM).
-
-The script:
-
-1. Reads an input XMI instance model.
-2. Reads a target Ecore metamodel.
-3. Sends both to an OpenAI-compatible LLM endpoint.
-4. Generates a new XMI instance intended to conform to the target metamodel.
-5. Saves the generated model as `<input>_mapped.xmi`.
-
-Example:
-
-```bash
-python mapper.py instance_model.xmi target_metamodel.ecore
-```
-
-Generated output:
-
-```
-instance_model_mapped.xmi
-```
+- **model_mapper_workflow.py** – LLM-based model transformation
+- **instance_validator.py** – Ecore/XMI validator (PyEcore)
+- **sysml_instance_validator.py** – SysML v2 validator
 
 ---
 
-### 2. `instance_validator.py`
+# Summary
 
-Validates an XMI model instance against an Ecore metamodel using PyEcore.
-
-The validator checks:
-
-* required attributes and references
-* multiplicity constraints
-* attribute datatypes
-* enumeration values
-* reference types
-* containment consistency
-* opposite references
-* uniqueness constraints
-* abstract class instantiation
-* unresolved proxies
-
-Example:
-
-```bash
-python instance_validator.py target_metamodel.ecore instance_model_mapped.xmi
-```
-
-Possible exit codes:
-
-| Code | Meaning                  |
-| ---- | ------------------------ |
-| 0    | Model is valid           |
-| 1    | Validation errors found  |
-| 2    | Loading or parsing error |
-
----
+- Supports Ecore and SysML v2 transformations.
+- Uses OpenAI-compatible LLMs.
+- Reads API settings from `.env`.
+- Automatically cleans LLM Markdown output.
+- Validates generated models using dedicated Ecore and SysML validators.
+- Suitable for homogeneous and heterogeneous model transformations.
 
 # Requirements
 
-* Python 3.10+
-* PyEcore
-* OpenAI Python SDK
-* Pillow
-* python-dotenv
+- Python 3.10+
+- OpenAI-compatible inference server
 
 Install dependencies:
 
 ```bash
-pip install pyecore openai pillow python-dotenv
+pip install openai python-dotenv pillow pyecore
 ```
-
----
-
-# Configuration
 
 Create a `.env` file:
 
 ```text
 OPENAI_API_KEY=<your_api_key>
-OPENAI_BASE_URL=http://131.159.60.153:3000/inference
-OPENAI_MODEL=Qwen/Qwen3.5-122B-A10B
+OPENAI_BASE_URL=http://<server>/inference
 ```
-
-Alternatively, the API key can be specified directly in `mapper.py`.
 
 ---
 
-# Usage
+# 1. model_mapper_workflow.py
 
-## Transform a model
+Transforms model instances using an LLM.
+
+Supported transformations:
+
+- Ecore → Ecore
+- Ecore → SysML v2
+- SysML v2 → SysML v2
+- SysML v2 → Ecore
+
+## Usage
 
 ```bash
-python mapper.py source.xmi target.ecore
+python3 model_mapper_workflow.py <instance_model> <target_model> <ecore|sysml>
 ```
 
-Workflow:
-
-```
-source.xmi
-      │
-      ▼
-Read source model
-      │
-      ▼
-Read target metamodel
-      │
-      ▼
-LLM mapping
-      │
-      ▼
-source_mapped.xmi
-      │
-      ▼
-Automatic validation
-```
-
----
-
-## Validate an existing model
+Examples:
 
 ```bash
-python instance_validator.py target.ecore source_mapped.xmi
-```
+python3 model_mapper_workflow.py instance.xmi target.ecore ecore
 
-Example output:
+python3 model_mapper_workflow.py instance.xmi target.sysml sysml
 
-```
-VALID: 'source_mapped.xmi' conforms to 'target.ecore'.
-```
+python3 model_mapper_workflow.py instance.sysml target.ecore ecore
 
-or
-
-```
-[ERROR] /Root/items[0]<Book>.title:
-Required attribute must be set.
-
-INVALID: 1 error(s) and 0 warning(s) found.
-```
-
----
-
-# Project Structure
-
-```
-.
-├── mapper.py
-├── instance_validator.py
-├── instance_model.xmi
-├── target_metamodel.ecore
-├── instance_model_mapped.xmi
-├── .env
-└── README.md
-```
-
----
-
-# Overall Workflow
-
-```
-             instance_model.xmi
-                     │
-                     ▼
-             ┌─────────────────┐
-             │    mapper.py     │
-             │                 │
-             │  Reads XMI      │
-             │  Reads Ecore    │
-             │  Calls the LLM  │
-             └────────┬────────┘
-                      │
-                      ▼
-          instance_model_mapped.xmi
-                      │
-                      ▼
-        ┌──────────────────────────┐
-        │ instance_validator.py    │
-        │                          │
-        │ Loads Ecore              │
-        │ Loads generated XMI      │
-        │ Checks EMF constraints   │
-        └────────────┬─────────────┘
-                     │
-          VALID / INVALID report
-```
-# HAL4SDV Model Mapper
-
-This repository contains two Python utilities for LLM-assisted model transformation and validation of EMF models.
-
-## Components
-
-### 1. `mapper.py`
-
-Transforms an XMI model instance to comply with a target Ecore metamodel using a Large Language Model (LLM).
-
-The script:
-
-1. Reads an input XMI instance model.
-2. Reads a target Ecore metamodel.
-3. Sends both to an OpenAI-compatible LLM endpoint.
-4. Generates a new XMI instance intended to conform to the target metamodel.
-5. Saves the generated model as `<input>_mapped.xmi`.
-6. Automatically validates the generated model using `instance_validator.py`.
-
-Example:
-
-```bash
-python mapper.py instance_model.xmi target_metamodel.ecore
+python3 model_mapper_workflow.py instance.sysml target.sysml sysml
 ```
 
 Generated output:
 
-```
-instance_model_mapped.xmi
-```
+- `<input>_mapped.xmi`
+- `<input>_mapped.sysml`
+
+The workflow automatically removes Markdown code fences returned by the LLM.
 
 ---
 
-### 2. `instance_validator.py`
+# 2. instance_validator.py
 
-Validates an XMI model instance against an Ecore metamodel using PyEcore.
+Validates an XMI instance against an Ecore metamodel using **PyEcore**.
 
-The validator checks:
-
-* required attributes and references
-* multiplicity constraints
-* attribute datatypes
-* enumeration values
-* reference types
-* containment consistency
-* opposite references
-* uniqueness constraints
-* abstract class instantiation
-* unresolved proxies
-
-Example:
+## Usage
 
 ```bash
-python instance_validator.py target_metamodel.ecore instance_model_mapped.xmi
+python3 instance_validator.py target.ecore instance_mapped.xmi
 ```
 
-Possible exit codes:
+Checks include:
 
-| Code | Meaning                  |
-| ---- | ------------------------ |
-| 0    | Model is valid           |
-| 1    | Validation errors found  |
-| 2    | Loading or parsing error |
+- XML well-formedness
+- metamodel conformance
+- containment hierarchy
+- multiplicities
+- mandatory features
+- datatype compatibility
+- references
+- uniqueness constraints
+
+Exit codes:
+
+- `0` – valid
+- `1` – validation errors
+- `2` – loading/parsing error
 
 ---
 
-# Requirements
+# 3. sysml_instance_validator.py
 
-* Python 3.10+
-* PyEcore
-* OpenAI Python SDK
-* Pillow
-* python-dotenv
+Validates textual SysML v2 instances against user-defined `part def` and `port def` definitions.
 
-Install dependencies:
+## Usage
 
 ```bash
-pip install pyecore openai pillow python-dotenv
+python3 sysml_instance_validator.py target.sysml instance_mapped.sysml
 ```
+
+Generate a JSON report:
+
+```bash
+python3 sysml_instance_validator.py target.sysml instance.sysml --output report.json
+```
+
+Checks include:
+
+- typed part usages
+- port usages
+- declared types
+- attributes
+- multiplicities
+- required features
+- primitive value types
+
+Exit codes:
+
+- `0` – valid
+- `1` – validation errors
 
 ---
 
-# Configuration
+# Typical Workflow
 
-Create a `.env` file:
+**Ecore → Ecore**
 
 ```text
-OPENAI_API_KEY=<your_api_key>
-OPENAI_BASE_URL=http://131.159.60.153:3000/inference
-OPENAI_MODEL=Qwen/Qwen3.5-122B-A10B
-```
-
-Alternatively, the API key can be specified directly in `mapper.py`.
-
----
-
-# Usage
-
-## Transform a model
-
-```bash
-python mapper.py source.xmi target.ecore
-```
-
-Workflow:
-
-```
-source.xmi
+instance.xmi
       │
       ▼
-Read source model
+model_mapper_workflow.py
       │
       ▼
-Read target metamodel
+mapped.xmi
       │
       ▼
-LLM mapping
-      │
-      ▼
-source_mapped.xmi
-      │
-      ▼
-Automatic validation
+instance_validator.py
 ```
 
----
-
-## Validate an existing model
-
-```bash
-python instance_validator.py target.ecore source_mapped.xmi
-```
-
-Example output:
-
-```
-VALID: 'source_mapped.xmi' conforms to 'target.ecore'.
-```
-
-or
-
-```
-[ERROR] /Root/items[0]<Book>.title:
-Required attribute must be set.
-
-INVALID: 1 error(s) and 0 warning(s) found.
-```
-
----
-
-# Project Structure
-
-```
-.
-├── mapper.py
-├── instance_validator.py
-├── instance_model.xmi
-├── target_metamodel.ecore
-├── instance_model_mapped.xmi
-├── .env
-└── README.md
-```
-
----
-
-# Overall Workflow
-
-```
-             instance_model.xmi
-                     │
-                     ▼
-             ┌─────────────────┐
-             │    mapper.py     │
-             │                 │
-             │  Reads XMI      │
-             │  Reads Ecore    │
-             │  Calls the LLM  │
-             └────────┬────────┘
-                      │
-                      ▼
-          instance_model_mapped.xmi
-                      │
-                      ▼
-        ┌──────────────────────────┐
-        │ instance_validator.py    │
-        │                          │
-        │ Loads Ecore              │
-        │ Loads generated XMI      │
-        │ Checks EMF constraints   │
-        └────────────┬─────────────┘
-                     │
-          VALID / INVALID report
-```
-
-### 3. `sysml_instance_validator.py`
-
-### Overview
-
-The **SysML Model Instance Validator** verifies that a SysML v2 model instance conforms to a user-defined SysML model. It is intended for validating LLM-generated SysML instances without requiring full SysML metamodel validation.
-
-The validator performs structural validation by comparing an instance model against the corresponding type definitions.
-
-### Validation Scope
-
-The validator currently checks:
-
-* Existence of referenced `part def` and `port def` types.
-* Correct usage of user-defined parts and ports.
-* Presence of required features.
-* Attribute existence.
-* Primitive attribute value types (`Boolean`, `Integer`, `Natural`, `Real`, `Rational`, `String`).
-* Nested part and port structures.
-* Multiplicity constraints.
-
-The validator does **not** currently perform:
-
-* Full SysML v2 language validation.
-* KerML semantic validation.
-* Inheritance or specialization checking.
-* Constraint or expression evaluation.
-* Behavioral model validation (activities, states, actions, interactions).
-* Connection or interface compatibility checking.
-
-### Input Files
-
-The validator requires two SysML v2 textual models:
-
-1. **Definition model** – contains the user-defined structure (`part def`, `port def`, attributes, and feature declarations).
-2. **Instance model** – contains one or more model instances that should conform to the definition model.
-
-Example:
+**Ecore → SysML**
 
 ```text
-VehicleDefinitions.sysml
-VehicleInstance.sysml
+instance.xmi
+      │
+      ▼
+model_mapper_workflow.py
+      │
+      ▼
+mapped.sysml
+      │
+      ▼
+sysml_instance_validator.py
 ```
 
-### Usage
-
-```bash
-python sysml_instance_validator.py VehicleDefinitions.sysml VehicleInstance.sysml
-```
-
-To save the validation report:
-
-```bash
-python sysml_instance_validator.py \
-    VehicleDefinitions.sysml \
-    VehicleInstance.sysml \
-    --output validation_report.json
-```
-
-### Output
-
-The validator produces a JSON report containing:
-
-* validation status (`valid`)
-* parsed type definitions
-* discovered model instances
-* validation errors
-* warnings
-
-Example:
-
-```json
-{
-  "valid": true,
-  "definition_file": "VehicleDefinitions.sysml",
-  "instance_file": "VehicleInstance.sysml",
-  "definitions": [
-    "Battery",
-    "ElectricalPort",
-    "ElectricMotor",
-    "ElectricVehicle"
-  ],
-  "instances": [
-    "myVehicle"
-  ],
-  "errors": [],
-  "warnings": []
-}
-```
-
-Example of an invalid model:
-
-```json
-{
-  "valid": false,
-  "errors": [
-    {
-      "severity": "ERROR",
-      "path": "myVehicle.motor",
-      "message": "Required feature 'motor' is missing."
-    }
-  ]
-}
-```
-
-### Typical Workflow
+**SysML → SysML**
 
 ```text
-User-defined SysML model
-        │
-        ▼
-VehicleDefinitions.sysml
-        │
-        ▼
-LLM-generated instance
-        │
-        ▼
-VehicleInstance.sysml
-        │
-        ▼
-SysML Instance Validator
-        │
-        ▼
-JSON validation report
+instance.sysml
+      │
+      ▼
+model_mapper_workflow.py
+      │
+      ▼
+mapped.sysml
+      │
+      ▼
+sysml_instance_validator.py
 ```
 
-This workflow is particularly suitable for validating automatically generated SysML v2 instances produced by large language models before further processing or transformation.
+**SysML → Ecore**
+
+```text
+instance.sysml
+      │
+      ▼
+model_mapper_workflow.py
+      │
+      ▼
+mapped.xmi
+      │
+      ▼
+instance_validator.py
+```
+
+---
+
