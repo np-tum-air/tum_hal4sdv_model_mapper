@@ -4,7 +4,7 @@ This repository contains two Python utilities for LLM-assisted model transformat
 
 ## Components
 
-### 1. `mapper.py`
+### 1. `model_mapper_workflow.py`
 
 Transforms an XMI model instance to comply with a target Ecore metamodel using a Large Language Model (LLM).
 
@@ -15,7 +15,6 @@ The script:
 3. Sends both to an OpenAI-compatible LLM endpoint.
 4. Generates a new XMI instance intended to conform to the target metamodel.
 5. Saves the generated model as `<input>_mapped.xmi`.
-6. Automatically validates the generated model using `instance_validator.py`.
 
 Example:
 
