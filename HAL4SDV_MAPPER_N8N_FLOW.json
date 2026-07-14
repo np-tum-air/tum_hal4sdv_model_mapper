@@ -1,0 +1,561 @@
+{
+  "name": "HAL4SDV_MAPPER",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.chatInput }}",
+                    "rightValue": "ecore",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8cbb84c0-8632-4781-b950-7d4ad061b22a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ecore"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "14bfef8d-c80d-4bad-9608-dc4558982215",
+                    "leftValue": "={{ $json.chatInput }}",
+                    "rightValue": "sysml",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "sysml"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        192
+      ],
+      "id": "dcec0bc9-f052-458d-ba9d-2ceb5e16036d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "message": "Provide ecore target metamodel",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        272,
+        32
+      ],
+      "id": "dc29c063-abbc-404a-8395-94ffe3163564",
+      "name": "Provide target"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/home/cecas/nenad/hal4sdv_mapper/target.ecore",
+        "dataPropertyName": "=data",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        672,
+        48
+      ],
+      "id": "4036fef0-09d1-4bfa-b709-23ca3e9622b4",
+      "name": "Store Target",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "=chatInput",
+        "binaryPropertyName": "=data",
+        "options": {
+          "fileName": "target.ecore"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        64
+      ],
+      "id": "5f87a516-148f-492e-a957-12e8487dd170",
+      "name": "Convert Target to File",
+      "alwaysOutputData": true,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "message": "Provide instance model",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        880,
+        32
+      ],
+      "id": "0ece97dd-b471-4324-b553-8df2114c58ab",
+      "name": "Provide instance"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Mode? ecore/sysml",
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        208
+      ],
+      "id": "fb4545d0-f155-4c1a-a019-ae4eba429164",
+      "name": "When chat message received",
+      "webhookId": "d8f13047-a15d-4de0-8a48-a5725dd4b667"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "=chatInput",
+        "binaryPropertyName": "=data",
+        "options": {
+          "fileName": "target.ecore"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        128
+      ],
+      "id": "1b25365c-697e-4a5c-aee0-9518466d6ca2",
+      "name": "Convert Instance to File",
+      "alwaysOutputData": true,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "command": "=sed -i '1s/^[[:space:]]*//'  /home/cecas/nenad/hal4sdv_mapper/target.ecore\npython3 /home/cecas/nenad/hal4sdv_mapper/instance_validator.py /home/cecas/nenad/hal4sdv_mapper/target.ecore /home/cecas/nenad/hal4sdv_mapper/instance_input_mapped.xmi"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        144
+      ],
+      "id": "177bdc3f-687b-4494-b910-69a43484b3ef",
+      "name": "Validate Ecore Instance"
+    },
+    {
+      "parameters": {
+        "message": "Provide sysml target metamodel",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        320,
+        336
+      ],
+      "id": "07373bb6-eb52-4c22-af44-a41cca718318",
+      "name": "Provide target1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/home/cecas/nenad/hal4sdv_mapper/target.sysml",
+        "dataPropertyName": "=data",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        720,
+        352
+      ],
+      "id": "fac75b00-8191-44b4-968d-e88c0ce76212",
+      "name": "Store Target1",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "=chatInput",
+        "binaryPropertyName": "=data",
+        "options": {
+          "fileName": "target.sysml"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        368
+      ],
+      "id": "50110cf9-630c-46da-94cb-ecc7bbc403b1",
+      "name": "Convert Target to File1",
+      "alwaysOutputData": true,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "message": "Provide instance model",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        928,
+        336
+      ],
+      "id": "a667d159-0211-407c-b7e7-ef0b3aee67c0",
+      "name": "Provide instance1"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "=chatInput",
+        "binaryPropertyName": "=data",
+        "options": {
+          "fileName": "target.ecore"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        432
+      ],
+      "id": "032e96fa-ef47-4ae8-870b-c93b23e8d98b",
+      "name": "Convert Instance to File1",
+      "alwaysOutputData": true,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "command": "=python3 /home/cecas/nenad/hal4sdv_mapper/model_mapper_workflow.py /home/cecas/nenad/hal4sdv_mapper/instance_input.txt /home/cecas/nenad/hal4sdv_mapper/target.sysml sysml || true"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        416
+      ],
+      "id": "332a7bef-7e6c-4d75-87eb-de304a1c5f3a",
+      "name": "LLM: Execute Mapper Prompt SysML"
+    },
+    {
+      "parameters": {
+        "command": "=python3 /home/cecas/nenad/hal4sdv_mapper/model_mapper_workflow.py /home/cecas/nenad/hal4sdv_mapper/instance_input.txt /home/cecas/nenad/hal4sdv_mapper/target.ecore ecore || true"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        112
+      ],
+      "id": "acb89ba2-b391-42b5-a18e-48de956a189d",
+      "name": "LLM: Execute Mapper Prompt Ecore"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/home/cecas/nenad/hal4sdv_mapper/instance_input.txt",
+        "dataPropertyName": "=data",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        304
+      ],
+      "id": "8bbd942d-832e-4d16-ae5e-005d921efcba",
+      "name": "Store Instance SysML",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "command": "=python3 /home/cecas/nenad/hal4sdv_mapper/sysml_instance_validator.py /home/cecas/nenad/hal4sdv_mapper/target.sysml /home/cecas/nenad/hal4sdv_mapper/instance_input_mapped.sysml"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        448
+      ],
+      "id": "19593d82-a39b-456e-bb74-c1d7b7d9c042",
+      "name": "Validate SysML Instance"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/home/cecas/nenad/hal4sdv_mapper/instance_input.txt",
+        "dataPropertyName": "=data",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        0
+      ],
+      "id": "f8eba65b-d0cb-4dd3-a355-5c795188ef19",
+      "name": "Store Ecore Instance",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Provide target",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Provide target1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Provide target": {
+      "main": [
+        [
+          {
+            "node": "Convert Target to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Target to File": {
+      "main": [
+        [
+          {
+            "node": "Store Target",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Target": {
+      "main": [
+        [
+          {
+            "node": "Provide instance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Provide instance": {
+      "main": [
+        [
+          {
+            "node": "Convert Instance to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Instance to File": {
+      "main": [
+        [
+          {
+            "node": "Store Ecore Instance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Provide target1": {
+      "main": [
+        [
+          {
+            "node": "Convert Target to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Target1": {
+      "main": [
+        [
+          {
+            "node": "Provide instance1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Target to File1": {
+      "main": [
+        [
+          {
+            "node": "Store Target1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Provide instance1": {
+      "main": [
+        [
+          {
+            "node": "Convert Instance to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Instance to File1": {
+      "main": [
+        [
+          {
+            "node": "Store Instance SysML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM: Execute Mapper Prompt SysML": {
+      "main": [
+        [
+          {
+            "node": "Validate SysML Instance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM: Execute Mapper Prompt Ecore": {
+      "main": [
+        [
+          {
+            "node": "Validate Ecore Instance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Instance SysML": {
+      "main": [
+        [
+          {
+            "node": "LLM: Execute Mapper Prompt SysML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Ecore Instance": {
+      "main": [
+        [
+          {
+            "node": "LLM: Execute Mapper Prompt Ecore",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4087955d-0323-4c1a-a287-0223f24b124d",
+  "meta": {
+    "instanceId": "48f39c2013e7d489785786862807256078a6eada1431be5bdaeb13e3db0773e9"
+  },
+  "id": "O9MXIqbBcSmu03dE",
+  "tags": []
+}
