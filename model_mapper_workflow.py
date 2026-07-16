@@ -39,16 +39,6 @@ base_prompt_sysml = (
     "or Markdown code fences."
 )
 
-
-"""
-base_prompt_sysml = (
-    "You are converting a given model instance to comply with a target "
-    "SysML model definition. Map as many elements as possible from the "
-    "model instance to the target model. Return a valid SysML model instance."
-)
-"""
-
-
 def imageToContentBody(img: Image.Image) -> dict:
     buf = io.BytesIO()
     img.save(buf, format="PNG")
