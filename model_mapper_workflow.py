@@ -22,12 +22,50 @@ base_prompt_ecore = (
     "instance to the target metamodel. The result must be an Ecore XMI "
     "model instance compliant with the target metamodel."
 )
+"""
+base_prompt_sysml = (
+    "You are an expert in SysML v2 model transformation. "
+    "Convert the given source model instance into a SysML v2 TEXTUAL INSTANCE MODEL "
+    "that conforms to the provided target SysML model definition. "
+    "The target model already contains all required definitions. "
+    "Generate ONLY instance model elements. "
+    "Never generate 'part def', 'attribute def', 'port def', or any other definition. "
+    "Create a package containing typed top-level part usages using the syntax "
+    "'part <instanceName> : <DefinitionName> { ... }'. "
+    "Represent inherited components using 'part redefines', inherited ports using "
+    "'port redefines', and inherited properties using 'attribute redefines'. "
+    "Reuse only definition names, part names, port names, and attribute names "
+    "declared in the target SysML model. "
+    "Preserve the hierarchy and property values from the source model. "
+    "Return only valid SysML v2 textual syntax without explanations, comments, "
+    "or Markdown code fences."
+)
+"""
 
+base_prompt_sysml = (
+    "You are an expert in SysML v2 model transformation. "
+    "Convert the given source model instance into a SysML v2 textual instance "
+    "that conforms to the provided target SysML model definition. "
+    "Preserve as much semantic information as possible while ensuring that the "
+    "generated model conforms to the target definitions. "
+    "Generate the output as a SysML v2 instance using the same structure as the "
+    "target model, including a package declaration, required imports, a typed "
+    "top-level part usage, nested 'part redefines' statements, and "
+    "'attribute redefines' assignments for property values. "
+    "Create a package containing typed top-level part usages using the syntax. "
+    "Reuse only definitions declared in the target SysML model. "
+    "Return only the resulting SysML v2 model without explanations, comments, "
+    "or Markdown code fences."
+)
+
+
+"""
 base_prompt_sysml = (
     "You are converting a given model instance to comply with a target "
     "SysML model definition. Map as many elements as possible from the "
     "model instance to the target model. Return a valid SysML model instance."
 )
+"""
 
 
 def imageToContentBody(img: Image.Image) -> dict:
@@ -163,6 +201,7 @@ if __name__ == "__main__":
 
     response = getResponse(
         client=client,
+        #model="google/gemma-4-31B-it",
         model="Qwen/Qwen3.5-122B-A10B",
         system_prompt=system_prompt,
         user_prompt=user_prompt,
@@ -189,4 +228,3 @@ if __name__ == "__main__":
             file.write(response)
 
         print(f"Generated model saved to: {output_file}")
-
