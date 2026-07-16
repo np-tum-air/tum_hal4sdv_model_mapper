@@ -1,0 +1,26 @@
+package AutomotiveHardwareDefinitions {
+
+    part def CameraSensor {
+        attribute name : String;
+        attribute resolution : String;
+        attribute fov : Real;
+    }
+
+    part def BrakeActuator {
+        attribute name : String;
+        attribute brakingLevel : Real;
+    }
+
+    part def SteeringActuator {
+        attribute name : String;
+        attribute steeringAngle : Real;
+    }
+
+    part def HardwarePlatform {
+        attribute name : String;
+
+        part camera : CameraSensor;
+        part brakes : BrakeActuator;
+        part steering : SteeringActuator;
+    }
+}
