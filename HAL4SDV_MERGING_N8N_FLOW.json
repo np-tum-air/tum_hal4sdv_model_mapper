@@ -1,0 +1,561 @@
+{
+  "name": "HAL4SDV_MERGING",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.chatInput }}",
+                    "rightValue": "ecore",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8cbb84c0-8632-4781-b950-7d4ad061b22a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ecore"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "14bfef8d-c80d-4bad-9608-dc4558982215",
+                    "leftValue": "={{ $json.chatInput }}",
+                    "rightValue": "sysml",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "sysml"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        192
+      ],
+      "id": "be9c7b96-9ed1-4760-a142-db0818bbf70e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Mode? ecore/sysml",
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        208
+      ],
+      "id": "4f916c0d-135a-4314-b550-ddc2955a6557",
+      "name": "When chat message received",
+      "webhookId": "c9eb486d-1d21-4012-805b-46f823dfe7c5"
+    },
+    {
+      "parameters": {
+        "message": "Provide first metamodel",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        288,
+        48
+      ],
+      "id": "00c44eb0-9874-4c81-9430-5b9494b42151",
+      "name": "Provide first metamodel"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/home/cecas/nenad/hal4sdv_mapper/first_metamodel.txt",
+        "dataPropertyName": "=data",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        672,
+        48
+      ],
+      "id": "bcb0d0dd-e288-40d1-8e67-82b2bbaeb6ea",
+      "name": "Store first",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "message": "Provide second metamodel",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        880,
+        32
+      ],
+      "id": "0f4fb8ca-fafe-413a-82f0-02d4854e85c2",
+      "name": "Provide second metamodel"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "=chatInput",
+        "binaryPropertyName": "=data",
+        "options": {
+          "fileName": "target.ecore"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        64
+      ],
+      "id": "abf4d369-d8c3-4083-bb9e-e48f88b06525",
+      "name": "Convert first to File",
+      "alwaysOutputData": true,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "=chatInput",
+        "binaryPropertyName": "=data",
+        "options": {
+          "fileName": "target.ecore"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        128
+      ],
+      "id": "5df4a48a-af3d-40d0-b28c-74c79b36486b",
+      "name": "Convert second to File",
+      "alwaysOutputData": true,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/home/cecas/nenad/hal4sdv_mapper/second_metamodel.txt",
+        "dataPropertyName": "=data",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        0
+      ],
+      "id": "9e93eaed-f751-4f5c-bc26-c7174d1d85a4",
+      "name": "Store second",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "command": "=python3 /home/cecas/nenad/hal4sdv_mapper/model_merge_workflow.py /home/cecas/nenad/hal4sdv_mapper/first_metamodel.txt /home/cecas/nenad/hal4sdv_mapper/second_metamodel.txt ecore || true"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        112
+      ],
+      "id": "3f30914e-c0a5-40e2-bfb5-e29098160655",
+      "name": "LLM: Execute Merge Prompt Ecore"
+    },
+    {
+      "parameters": {
+        "command": "=python3 /home/cecas/nenad/hal4sdv_mapper/validate_ecore_metamodel.py;"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        144
+      ],
+      "id": "74d9bbb0-90ad-4c78-bce7-481946bb3481",
+      "name": "Validate Ecore Metamodel"
+    },
+    {
+      "parameters": {
+        "message": "Provide first metamodel",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        320,
+        336
+      ],
+      "id": "dfc073e8-5c24-463f-aa0a-0087e06f6e49",
+      "name": "Provide first metamodel1"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "=chatInput",
+        "binaryPropertyName": "=data",
+        "options": {
+          "fileName": "target.sysml"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        368
+      ],
+      "id": "efb281ac-d584-4370-83f0-b39d8d98e5be",
+      "name": "Convert first to File1",
+      "alwaysOutputData": true,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/home/cecas/nenad/hal4sdv_mapper/first_metamodel.txt",
+        "dataPropertyName": "=data",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        720,
+        352
+      ],
+      "id": "940c02da-212e-440b-80b7-448a0684cd34",
+      "name": "Store first1",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "message": "Provide second metamodel",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        928,
+        336
+      ],
+      "id": "7b644884-2730-44bd-b6d9-6696305da4f9",
+      "name": "Provide second metamodel1"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "=chatInput",
+        "binaryPropertyName": "=data",
+        "options": {
+          "fileName": "target.ecore"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        432
+      ],
+      "id": "f845fa61-512e-40a9-a123-29cead63b296",
+      "name": "Convert second to File1",
+      "alwaysOutputData": true,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/home/cecas/nenad/hal4sdv_mapper/second_metamodel.txt",
+        "dataPropertyName": "=data",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        304
+      ],
+      "id": "9780e11e-a846-4bee-b641-38e809006c7b",
+      "name": "Store second1",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "command": "=python3 /home/cecas/nenad/hal4sdv_mapper/model_merge_workflow.py /home/cecas/nenad/hal4sdv_mapper/first_metamodel.txt /home/cecas/nenad/hal4sdv_mapper/second_metamodel.txt sysml || true"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        416
+      ],
+      "id": "c1000d42-0c20-4d28-ac88-4cf06fa1613b",
+      "name": "LLM: Execute Merge Prompt SysML"
+    },
+    {
+      "parameters": {
+        "command": "=python3 /home/cecas/nenad/hal4sdv_mapper/validate_sysml_metamodel.py;"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        448
+      ],
+      "id": "e75092ae-bbe5-498a-9ab7-013cbaeb7651",
+      "name": "Validate SysML Metamodel"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Provide first metamodel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Provide first metamodel1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Provide first metamodel": {
+      "main": [
+        [
+          {
+            "node": "Convert first to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store first": {
+      "main": [
+        [
+          {
+            "node": "Provide second metamodel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Provide second metamodel": {
+      "main": [
+        [
+          {
+            "node": "Convert second to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert first to File": {
+      "main": [
+        [
+          {
+            "node": "Store first",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert second to File": {
+      "main": [
+        [
+          {
+            "node": "Store second",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store second": {
+      "main": [
+        [
+          {
+            "node": "LLM: Execute Merge Prompt Ecore",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM: Execute Merge Prompt Ecore": {
+      "main": [
+        [
+          {
+            "node": "Validate Ecore Metamodel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Provide first metamodel1": {
+      "main": [
+        [
+          {
+            "node": "Convert first to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert first to File1": {
+      "main": [
+        [
+          {
+            "node": "Store first1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store first1": {
+      "main": [
+        [
+          {
+            "node": "Provide second metamodel1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Provide second metamodel1": {
+      "main": [
+        [
+          {
+            "node": "Convert second to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert second to File1": {
+      "main": [
+        [
+          {
+            "node": "Store second1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store second1": {
+      "main": [
+        [
+          {
+            "node": "LLM: Execute Merge Prompt SysML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM: Execute Merge Prompt SysML": {
+      "main": [
+        [
+          {
+            "node": "Validate SysML Metamodel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0ee2b1ea-03fb-41b5-a015-667939c00896",
+  "meta": {
+    "instanceId": "48f39c2013e7d489785786862807256078a6eada1431be5bdaeb13e3db0773e9"
+  },
+  "id": "REUnY10IQo0YLgEH",
+  "tags": []
+}
