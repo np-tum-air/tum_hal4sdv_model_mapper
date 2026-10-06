@@ -1,0 +1,53 @@
+SEMANTIC MAPPING EVALUATION
+========================================================================
+Aspect                       XMI     SysML     Matched       Score
+------------------------------------------------------------------------
+Components / instances         6         6         6/6      100.0%
+Attributes                    10        10       10/10      100.0%
+Attribute values              10        10       10/10      100.0%
+------------------------------------------------------------------------
+Overall semantic mapping                               26/26      100.0%
+
+XMI COMPONENTS
+------------------------------------------------------------
+vehicleControlPlatform : HardwarePlatform
+camera : CameraSensor
+lidar : LidarSensor
+radar : RadarSensor
+brakes : BrakeActuator
+steering : SteeringActuator
+
+SYSML COMPONENTS
+------------------------------------------------------------
+vehicleControlPlatform : HardwarePlatform
+camera
+lidar
+radar
+brakes
+steering
+
+XMI ATTRIBUTE VALUES
+------------------------------------------------------------
+resolution = 1920x1080
+fieldOfView = 120
+resolution = 0.2
+fieldOfView = 360
+range = 200
+resolution = 0.5
+fieldOfView = 150
+range = 250
+brakingLevel = 75
+steeringAngle = -15
+
+SYSML ATTRIBUTE VALUES
+------------------------------------------------------------
+resolution = 1920x1080
+fieldOfView = 120
+resolution = 0.2
+fieldOfView = 360
+range = 200
+resolution = 0.5
+fieldOfView = 150
+range = 250
+brakingLevel = 75
+steeringAngle = -15
